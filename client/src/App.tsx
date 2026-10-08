@@ -232,7 +232,6 @@ export function App() {
   const [selectedMilestone, setSelectedMilestone] = useState<Milestone | null>(null);
   const [checkpointCelebration, setCheckpointCelebration] = useState<number | null>(null);
   const [celebration, setCelebration] = useState<Milestone | null>(null);
-  const [celebrationBaseline, setCelebrationBaseline] = useState<number | null>(null);
   const [formMessage, setFormMessage] = useState("");
 
   const runs = runsQuery.data?.runs ?? [];
@@ -268,18 +267,6 @@ export function App() {
   const chartMax = Math.max(1, ...chartData.map((item) => item.miles));
 
   useEffect(() => {
-    if (celebrationBaseline === null || runsQuery.isFetching) return;
-    const crossed = [...milestones]
-      .reverse()
-      .find((item) => celebrationBaseline < item.miles && challengeMiles >= item.miles);
-    const checkpoint = Math.min(GOAL, Math.floor(challengeMiles / 10) * 10);
-    if (checkpoint > Math.floor(celebrationBaseline / 10) * 10) {
-      setCheckpointCelebration(checkpoint);
-    } else if (crossed) setCelebration(crossed);
-    setCelebrationBaseline(null);
-  }, [celebrationBaseline, runsQuery.isFetching, challengeMiles]);
-
-  useEffect(() => {
     document.body.classList.toggle("map-is-expanded", mapExpanded);
     return () => document.body.classList.remove("map-is-expanded");
   }, [mapExpanded]);
@@ -299,9 +286,17 @@ export function App() {
       setDate(localToday());
       setMiles("3");
       await refreshRuns();
+      const refreshed = queryClient.getQueryData<{ runs: Run[] }>(["runs"]);
+      const after = totalOf((refreshed?.runs ?? []).filter(isChallengeRun));
+      const checkpoint = Math.min(GOAL, Math.floor(after / 10) * 10);
+      if (checkpoint > Math.floor(challengeMiles / 10) * 10) {
+        setCheckpointCelebration(checkpoint);
+      } else {
+        const crossed = [...milestones].reverse().find((item) => challengeMiles < item.miles && after >= item.miles);
+        if (crossed) setCelebration(crossed);
+      }
     },
     onError: (error) => {
-      setCelebrationBaseline(null);
       setFormMessage(error instanceof Error ? error.message : "That run could not be saved.");
     },
   });
@@ -323,7 +318,6 @@ export function App() {
       return;
     }
     setFormMessage("");
-    setCelebrationBaseline(challengeMiles);
     const id = editing?.id ?? undefined;
     saveMutation.mutate({ date, miles: parsedMiles, ...(id !== undefined ? { id } : {}) });
   }
@@ -469,7 +463,7 @@ export function App() {
                 <b>MI</b>
               </div>
             </label>
-            <button className="primary-button" type="submit" disabled={saveMutation.isPending}>
+            <button className="primary-button" type="submit" disabled={saveMutation.isPending || deleteMutation.isPending || runsQuery.isFetching}>
               {saveMutation.isPending ? "Saving…" : editing ? "Save changes" : "Launch run"}
             </button>
             {editing ? <button className="text-button" type="button" onClick={cancelEdit}>Cancel edit</button> : null}
@@ -552,7 +546,7 @@ export function App() {
             <h2 id="delete-title">Take this run off the trail?</h2>
             <p>{displayDate(deleteTarget.date)} · {formatMiles(deleteTarget.miles)} miles</p>
             <div className="confirm-actions">
-              <button type="button" onClick={() => setDeleteTarget(null)}>Keep it</button>
+              <button type="button" disabled={deleteMutation.isPending} onClick={() => setDeleteTarget(null)}>Keep it</button>
               <button className="danger-button" type="button" disabled={deleteMutation.isPending} onClick={() => deleteTarget.id !== null && deleteMutation.mutate(deleteTarget.id)}>
                 {deleteMutation.isPending ? "Deleting…" : "Delete run"}
               </button>

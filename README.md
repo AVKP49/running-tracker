@@ -28,6 +28,7 @@ npm run dev
 ```sh
 npm run build
 npm run preview
+npm run test:smoke
 npm test
 ```
 
@@ -53,3 +54,7 @@ IDs in the existing script are sheet row numbers. Avoid simultaneous edits/delet
 This is a **virtual challenge**, scaled so 1,000 logged miles completes the journey. The estimated driving route via the named landmarks is approximately 1,373 road miles. Landmark popups distinguish road distances from challenge thresholds. Road geometry and distances were generated from OSRM / OpenStreetMap on October 8, 2026 and bundled with the app, so no live routing API is required. Estimates are not turn-by-turn navigation instructions.
 
 `context.md` and `DATA-PLAN.md` are the original handoff notes and describe the previous hosting platform. The original ZIP remains in Downloads.
+
+## Verification
+
+`npm run test:smoke` executes the production bundle in a DOM environment with a mocked sheet and checks reads, date handling, add/edit/delete, checkpoint celebrations, and unconfirmed saves. It runs before publishing. Playwright tests additionally cover desktop and phone map gestures and real tile image loading; install Chromium with `npx playwright install chromium` before `npm test`. This Mac currently blocks launching Chromium, so gesture and screenshot verification remains for a browser-capable environment. The live site, deployed assets, Sheets GET endpoint, and public tile endpoint were checked over HTTPS.
