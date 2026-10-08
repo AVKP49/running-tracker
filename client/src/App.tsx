@@ -341,6 +341,7 @@ export function App() {
   return (
     <div className="app-shell">
       <main>
+        <div className="overview-grid">
         <section className="hero" aria-labelledby="mission-title">
           <div className="hero-copy">
             <p className="hero-tag">THE ONE-YEAR 1,000-MILE CHALLENGE</p>
@@ -390,55 +391,10 @@ export function App() {
             </div>
           </section>
 
-          <section className={`journey-map-card${mapExpanded ? " expanded" : ""}`} aria-labelledby="journey-map-title">
-            <div className="journey-map-heading">
-              <div>
-                <p className="section-kicker">YOUR 1,000-MILE WESTERN JOURNEY</p>
-                <h2 id="journey-map-title">The adventure atlas</h2>
-              </div>
-              <button className="map-expand-button" type="button" onClick={() => setMapExpanded((value) => !value)} aria-label={mapExpanded ? "Close fullscreen adventure map" : "Expand adventure map fullscreen"}>
-                <span aria-hidden="true">{mapExpanded ? "×" : "↗"}</span>
-                {mapExpanded ? "Close" : "Explore"}
-              </button>
-            </div>
-            <div className="map-progress-key" aria-label={`${formatMiles(challengeMiles)} miles completed and ${formatMiles(Math.max(0, GOAL - challengeMiles))} miles left`}>
-              <span><i className="done-key" /> {formatMiles(challengeMiles)} done</span>
-              <span><i className="left-key" /> {formatMiles(Math.max(0, GOAL - challengeMiles))} left</span>
-            </div>
-            <p className="map-game-note">A virtual road trip from San Francisco to Yellowstone. Your 1,000 challenge miles move you along this ≈ 1373-mile driving route. Ticks mark 10 challenge miles; tap real places to explore.</p>
-            <div className="adventure-map-frame">
-              <RealAdventureMap
-                milestones={milestones}
-                routePoints={routeTrack}
-                progressCheckpoints={progressCheckpoints}
-                runner={runnerPlace}
-                completedMiles={challengeMiles}
-                selected={selectedMilestone}
-                onSelect={setSelectedMilestone}
-                expanded={mapExpanded}
-              />
-            </div>
-            <div className="map-detail-panel" aria-live="polite">
-              {selectedMilestone ? (
-                <>
-                  <span className={`badge-orb ${selectedMilestone.tone}`} aria-hidden="true">{challengeMiles >= selectedMilestone.miles ? "✓" : "★"}</span>
-                  <div>
-                    <small>{formatMiles(selectedMilestone.miles)}-MILE LANDMARK · {challengeMiles >= selectedMilestone.miles ? "REACHED" : `${formatMiles(Math.max(0, selectedMilestone.miles - challengeMiles))} TO GO`}</small>
-                    <strong>{selectedMilestone.destination}</strong>
-                    <p>{selectedMilestone.detail}</p>
-                    <p>≈ {formatMiles(selectedMilestone.actualMiles)} road miles from San Francisco on this route.</p>
-                  </div>
-                </>
-              ) : (
-                <>
-                  <span className="start-pin" aria-hidden="true">SF</span>
-                  <div><small>STARTING LINE</small><strong>San Francisco</strong><p>Tap any named flag to discover its fun fact. The small dots underneath mark each 10 miles.</p></div>
-                </>
-              )}
-            </div>
-          </section>
+
         </section>
 
+        <div className="run-sidebar">
         <section className="log-zone" aria-labelledby="log-run-title">
           <div className="section-heading">
             <div>
@@ -507,6 +463,57 @@ export function App() {
             </div>
           )}
         </section>
+
+        </div>
+        </div>
+
+          <section className={`journey-map-card${mapExpanded ? " expanded" : ""}`} aria-labelledby="journey-map-title">
+            <div className="journey-map-heading">
+              <div>
+                <p className="section-kicker">YOUR 1,000-MILE WESTERN JOURNEY</p>
+                <h2 id="journey-map-title">The adventure atlas</h2>
+              </div>
+              <button className="map-expand-button" type="button" onClick={() => setMapExpanded((value) => !value)} aria-label={mapExpanded ? "Close fullscreen adventure map" : "Expand adventure map fullscreen"}>
+                <span aria-hidden="true">{mapExpanded ? "×" : "↗"}</span>
+                {mapExpanded ? "Close" : "Explore"}
+              </button>
+            </div>
+            <div className="map-progress-key" aria-label={`${formatMiles(challengeMiles)} miles completed and ${formatMiles(Math.max(0, GOAL - challengeMiles))} miles left`}>
+              <span><i className="done-key" /> {formatMiles(challengeMiles)} done</span>
+              <span><i className="left-key" /> {formatMiles(Math.max(0, GOAL - challengeMiles))} left</span>
+            </div>
+            <p className="map-game-note">A virtual road trip from San Francisco to Yellowstone. Your 1,000 challenge miles move you along this ≈ 1373-mile driving route. Ticks mark 10 challenge miles; tap real places to explore.</p>
+            <div className="adventure-map-frame">
+              <RealAdventureMap
+                milestones={milestones}
+                routePoints={routeTrack}
+                progressCheckpoints={progressCheckpoints}
+                runner={runnerPlace}
+                completedMiles={challengeMiles}
+                selected={selectedMilestone}
+                onSelect={setSelectedMilestone}
+                expanded={mapExpanded}
+              />
+            </div>
+            <div className="map-detail-panel" aria-live="polite">
+              {selectedMilestone ? (
+                <>
+                  <span className={`badge-orb ${selectedMilestone.tone}`} aria-hidden="true">{challengeMiles >= selectedMilestone.miles ? "✓" : "★"}</span>
+                  <div>
+                    <small>{formatMiles(selectedMilestone.miles)}-MILE LANDMARK · {challengeMiles >= selectedMilestone.miles ? "REACHED" : `${formatMiles(Math.max(0, selectedMilestone.miles - challengeMiles))} TO GO`}</small>
+                    <strong>{selectedMilestone.destination}</strong>
+                    <p>{selectedMilestone.detail}</p>
+                    <p>≈ {formatMiles(selectedMilestone.actualMiles)} road miles from San Francisco on this route.</p>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <span className="start-pin" aria-hidden="true">SF</span>
+                  <div><small>STARTING LINE</small><strong>San Francisco</strong><p>Tap any named flag to discover its fun fact. The small dots underneath mark each 10 miles.</p></div>
+                </>
+              )}
+            </div>
+          </section>
 
         <section className="history-zone" aria-labelledby="history-title">
           <div className="section-heading compact">

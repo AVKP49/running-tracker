@@ -12,7 +12,8 @@ Works in a browser on a phone, tablet, or computer. Google Sheets is the shared 
 
 - Log, edit, and delete dated runs; full history and a chart of the last 14 run days.
 - Challenge totals for September 30, 2026 through September 29, 2027.
-- Public Leaflet street map with CARTO / OpenStreetMap tiles, actual road geometry, pinch/scroll zoom, drag, fullscreen exploration, tappable landmarks, route reset, and a runner locator.
+- Public Leaflet street map with OpenStreetMap tiles with an OSM France alternate, actual road geometry, pinch/scroll zoom, drag, fullscreen exploration, tappable landmarks, route reset, and a runner locator.
+- A compact responsive dashboard with a full-width map.
 - A next-adventure panel with daily pace and the next checkpoint; confetti at every 10-mile crossing.
 - An illustrated atlas with a reconnect button when street tiles cannot load.
 
@@ -58,3 +59,5 @@ This is a **virtual challenge**, scaled so 1,000 logged miles completes the jour
 ## Verification
 
 `npm run test:smoke` executes the production bundle in a DOM environment with a mocked sheet and checks reads, date handling, add/edit/delete, checkpoint celebrations, and unconfirmed saves. It runs before publishing. Playwright tests additionally cover desktop and phone map gestures and real tile image loading; install Chromium with `npx playwright install chromium` before `npm test`. This Mac currently blocks launching Chromium, so gesture and screenshot verification remains for a browser-capable environment. The live site, deployed assets, Sheets GET endpoint, and public tile endpoint were checked over HTTPS.
+
+Map providers are checked with a fixed California image sample before displaying tiles. Predominantly monochrome error placards and the OSM access-blocked sample fail that check even when their HTTP response is 200. The alternate provider is tried when the first fails.

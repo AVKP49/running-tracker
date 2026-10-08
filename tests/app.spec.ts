@@ -9,6 +9,39 @@ test('street tiles render; map zoom, drag, landmarks, fullscreen and reset work'
   await page.goto('/');
   await expect(page.locator('.real-map-shell')).toHaveAttribute('data-map-status', 'ready', { timeout: 30_000 });
   expect(await page.locator('.leaflet-tile-loaded').evaluateAll((tiles) => tiles.filter((tile) => tile instanceof HTMLImageElement && tile.naturalWidth > 0).length)).toBeGreaterThan(0);
+  // A decoded error placard must not count as a working basemap.
+  const tile = page.locator('.leaflet-tile-loaded').first();
+  await expect(tile).toHaveAttribute('src', /tile\.openstreetmap\.(org|fr)\//);
+  const sourceHealthy = await page.evaluate(async () => {
+    const tile = document.querySelector('.leaflet-tile-loaded');
+    if (!(tile instanceof HTMLImageElement)) return false;
+    const sample = new Image();
+    sample.crossOrigin = 'anonymous';
+    sample.src = tile.src.includes('openstreetmap.fr') ? 'https://a.tile.openstreetmap.fr/hot/5/5/12.png' : 'https://tile.openstreetmap.org/5/5/12.png';
+    await sample.decode();
+    const canvas = document.createElement('canvas');
+    canvas.width = canvas.height = 256;
+    const context = canvas.getContext('2d');
+    if (!context) return false;
+    context.drawImage(sample, 0, 0);
+    const pixels = context.getImageData(0, 0, 256, 256).data;
+    let colored = 0;
+    for (let i = 0; i < pixels.length; i += 4) {
+      if (Math.max(pixels[i], pixels[i + 1], pixels[i + 2]) - Math.min(pixels[i], pixels[i + 1], pixels[i + 2]) > 18) colored++;
+    }
+    return colored / (pixels.length / 4) > .12;
+  });
+  expect(sourceHealthy).toBe(true);
+  if (testInfo.project.name === 'desktop') {
+    const mapBox = await page.locator('.journey-map-card').boundingBox();
+    const sidebar = await page.locator('.run-sidebar').boundingBox();
+    const mainBox = await page.locator('main').boundingBox();
+    expect(mapBox.width).toBeGreaterThan(mainBox.width * .9);
+    expect(sidebar.y + sidebar.height).toBeLessThan(mapBox.y);
+    const stats = await page.locator('.stats-strip').boundingBox();
+    const form = await page.locator('.log-zone').boundingBox();
+    expect(stats.y - (form.y + form.height)).toBeLessThan(40);
+  }
   await page.getByRole('button', { name: 'Expand adventure map fullscreen' }).click();
   await expect(page.locator('.journey-map-card')).toHaveClass(/expanded/);
   await page.getByRole('button', { name: 'My runner', exact: true }).click();

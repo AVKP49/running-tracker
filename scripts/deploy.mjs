@@ -5,6 +5,7 @@ import { join } from 'node:path';
 const run = (command, args, cwd) => execFileSync(command, args, { cwd, stdio: 'inherit' });
 run('npm', ['run', 'build']);
 run('node', ['tests/smoke.mjs']);
+run('node', ['--experimental-strip-types', 'tests/tile-health.mjs']);
 const remote = execFileSync('git', ['remote', 'get-url', 'origin'], { encoding: 'utf8' }).trim();
 const folder = mkdtempSync(join(tmpdir(), 'running-tracker-pages-'));
 try {

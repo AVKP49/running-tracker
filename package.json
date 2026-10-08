@@ -10,7 +10,8 @@
     "preview": "vite preview --host 127.0.0.1",
     "test": "playwright test",
     "deploy": "node scripts/deploy.mjs",
-    "test:smoke": "npm run build && node tests/smoke.mjs"
+    "test:smoke": "npm run build && node tests/smoke.mjs",
+    "test:tiles": "node --experimental-strip-types tests/tile-health.mjs"
   },
   "dependencies": {
     "@tanstack/react-query": "5.100.10",

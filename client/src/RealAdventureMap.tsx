@@ -3,6 +3,7 @@ import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { IllustratedAdventureMap, type IllustratedMilestone } from "./IllustratedAdventureMap";
 import roadData from "./route-data.json";
+import { probeMapTile } from "./tile-health";
 
 type Point = { lat: number; lng: number };
 type Props = {
@@ -64,6 +65,7 @@ export function RealAdventureMap(props: Props) {
   const runnerMarker = useRef<L.Marker | null>(null);
   const markers = useRef(new Map<number, L.Marker>());
   const latest = useRef(props);
+  const routeView = useRef(true);
   latest.current = props;
   const [status, setStatus] = useState<"loading" | "ready" | "fallback">("loading");
   const [attempt, setAttempt] = useState(0);
@@ -72,7 +74,7 @@ export function RealAdventureMap(props: Props) {
   useEffect(() => {
     if (!node.current) return;
     let alive = true;
-    let tileCount = 0;
+    const tileProbe = new AbortController();
     setStatus("loading");
     const instance = L.map(node.current, {
       minZoom: 4, maxZoom: 19, zoomControl: false,
@@ -81,16 +83,60 @@ export function RealAdventureMap(props: Props) {
     });
     map.current = instance;
     instance.fitBounds(BOUNDS, { padding: [35, 35] });
-    const tiles = L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png", {
-      subdomains: "abcd", maxNativeZoom: 19, maxZoom: 19,
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
+    const markExploring = () => { routeView.current = false; };
+    instance.on("dragstart", markExploring);
+    node.current.addEventListener("wheel", markExploring, { passive: true });
+    const mapNode = node.current;
+    const resizeObserver = typeof ResizeObserver === "undefined" ? null : new ResizeObserver(() => {
+      if (!alive) return;
+      instance.invalidateSize({ pan: false });
+      if (routeView.current) instance.fitBounds(BOUNDS, { padding: [35, 35], animate: false });
     });
-    // A real tileload event fires after the tile image has decoded successfully.
-    tiles.on("tileload", () => { tileCount += 1; if (alive) setStatus("ready"); });
-    tiles.addTo(instance);
-    const timeout = window.setTimeout(() => {
-      if (alive && tileCount === 0) setStatus("fallback");
-    }, 15_000);
+    resizeObserver?.observe(mapNode);
+    const sources = [
+      {
+        url: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+        probe: "https://tile.openstreetmap.org/5/5/12.png",
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+      },
+      {
+        url: "https://a.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png",
+        probe: "https://a.tile.openstreetmap.fr/hot/5/5/12.png",
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> · <a href="https://www.hotosm.org/">HOT</a> · Tiles <a href="https://www.openstreetmap.fr/">OSM France</a>',
+      },
+    ];
+    let tileTimeout: number | undefined;
+    const loadStreetTiles = async () => {
+      for (const source of sources) {
+        const healthy = await probeMapTile(source.probe, tileProbe.signal);
+        if (!alive) return;
+        if (!healthy) continue;
+        const tiles = L.tileLayer(source.url, {
+          maxNativeZoom: 19, maxZoom: 19, crossOrigin: "anonymous",
+          referrerPolicy: "strict-origin-when-cross-origin", attribution: source.attribution,
+        });
+        const loaded = await new Promise<boolean>((resolve) => {
+          let settled = false;
+          const finish = (success: boolean) => {
+            if (settled) return;
+            settled = true;
+            window.clearTimeout(tileTimeout);
+            tileProbe.signal.removeEventListener("abort", abort);
+            resolve(success);
+          };
+          const abort = () => finish(false);
+          tileProbe.signal.addEventListener("abort", abort, { once: true });
+          tiles.once("tileload", () => finish(true));
+          tileTimeout = window.setTimeout(() => finish(false), 8_000);
+          tiles.addTo(instance);
+        });
+        if (!alive) return;
+        if (loaded) { setStatus("ready"); return; }
+        instance.removeLayer(tiles);
+      }
+      if (alive) setStatus("fallback");
+    };
+    void loadStreetTiles();
 
     L.polyline(ROAD, { color: "#fffaf0", weight: 8, opacity: 0.95 }).addTo(instance);
     L.polyline(ROAD, { color: "#456b66", weight: 4, opacity: 0.85 }).addTo(instance);
@@ -149,7 +195,10 @@ export function RealAdventureMap(props: Props) {
     declutter();
     return () => {
       alive = false;
-      window.clearTimeout(timeout);
+      tileProbe.abort();
+      window.clearTimeout(tileTimeout);
+      resizeObserver?.disconnect();
+      mapNode.removeEventListener("wheel", markExploring);
       instance.remove();
       map.current = null;
       markers.current.clear();
@@ -169,17 +218,23 @@ export function RealAdventureMap(props: Props) {
     if (!props.selected || !map.current) return;
     const marker = markers.current.get(props.selected.miles);
     if (!marker) return;
+    routeView.current = false;
     marker.addTo(map.current);
     map.current.flyTo(marker.getLatLng(), Math.max(8, map.current.getZoom()), { duration: 0.65 });
     marker.openPopup();
   }, [props.selected, attempt]);
 
   useEffect(() => {
-    const timer = window.setTimeout(() => map.current?.invalidateSize({ pan: false }), 80);
+    const timer = window.setTimeout(() => {
+      const instance = map.current;
+      if (!instance) return;
+      instance.invalidateSize({ pan: false });
+      if (routeView.current) instance.fitBounds(BOUNDS, { padding: [35, 35], animate: false });
+    }, 80);
     return () => window.clearTimeout(timer);
   }, [props.expanded, status]);
 
-  const fitRoute = () => { map.current?.closePopup(); map.current?.flyToBounds(BOUNDS, { padding: [35, 35], duration: 0.65 }); };
+  const fitRoute = () => { routeView.current = true; map.current?.closePopup(); map.current?.flyToBounds(BOUNDS, { padding: [35, 35], duration: 0.65 }); };
 
   return (
     <div className="real-map-shell" data-map-status={status}>
@@ -192,10 +247,11 @@ export function RealAdventureMap(props: Props) {
       {status === "loading" ? <div className="real-map-probe" role="status"><span className="map-loader" />Loading the street map…</div> : null}
       {status !== "fallback" ? <>
         <div className="journey-map-controls" aria-label="Map controls">
-          <button type="button" aria-label="Zoom in" onClick={() => map.current?.zoomIn()} disabled={zoom >= 19}>+</button>
-          <button type="button" aria-label="Zoom out" onClick={() => map.current?.zoomOut()} disabled={zoom <= 4}>−</button>
+          <button type="button" aria-label="Zoom in" onClick={() => { routeView.current = false; map.current?.zoomIn(); }} disabled={zoom >= 19}>+</button>
+          <button type="button" aria-label="Zoom out" onClick={() => { routeView.current = false; map.current?.zoomOut(); }} disabled={zoom <= 4}>−</button>
           <button type="button" onClick={fitRoute}>Route</button>
           <button type="button" onClick={() => {
+            routeView.current = false;
             const point = roadPointAtMiles(props.completedMiles);
             map.current?.flyTo([point.lat, point.lng], 11, { duration: 0.65 });
             runnerMarker.current?.openTooltip();
