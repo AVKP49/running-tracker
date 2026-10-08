@@ -1,0 +1,547 @@
+@import "tailwindcss";
+@import "tailwindcss-safe-area";
+
+@theme {
+  --text-xs: 12px;
+  --text-xs--line-height: 16px;
+  --text-sm: 14px;
+  --text-sm--line-height: 20px;
+  --text-base: 16px;
+  --text-base--line-height: 24px;
+  --text-lg: 18px;
+  --text-lg--line-height: 28px;
+  --text-xl: 20px;
+  --text-xl--line-height: 28px;
+  --text-2xl: 24px;
+  --text-2xl--line-height: 32px;
+  --text-3xl: 30px;
+  --text-3xl--line-height: 36px;
+  --text-4xl: 36px;
+  --text-4xl--line-height: 40px;
+  --text-5xl: 48px;
+  --text-5xl--line-height: 52px;
+}
+
+:root {
+  color-scheme: light dark;
+  --bg: #f7fbff;
+  --surface: #ffffff;
+  --surface-alt: #eaf8fe;
+  --text: #10243e;
+  --dim: #53677d;
+  --border: #bed8e7;
+  --accent: #ff6b35;
+  --cyan: #37c6f4;
+  --orange: #ff6b35;
+  --yellow: #ffd447;
+  --mint: #47d7ac;
+  --navy: #10243e;
+  --danger: #d84636;
+  --shadow: 0 12px 0 rgba(16, 36, 62, 0.09);
+  --radius: 18px;
+  --space-surface: var(--surface);
+  --space-surface-alt: var(--surface-alt);
+  --space-muted: var(--dim);
+  --space-border: var(--border);
+  --space-accent: var(--accent);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #081625;
+    --surface: #10243e;
+    --surface-alt: #15324d;
+    --text: #f4fbff;
+    --dim: #b6cbda;
+    --border: #31536b;
+    --accent: #ff8256;
+    --cyan: #4bd4ff;
+    --orange: #ff8256;
+    --yellow: #ffdc65;
+    --mint: #57e0b8;
+    --navy: #06121f;
+    --danger: #ff786a;
+    --shadow: 0 12px 0 rgba(0, 0, 0, 0.24);
+  }
+}
+
+* { box-sizing: border-box; }
+html { background: var(--bg); }
+body { margin: 0; min-width: 320px; min-height: 100vh; background: var(--bg); color: var(--text); font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+button, input { font: inherit; }
+button { -webkit-tap-highlight-color: transparent; }
+button:focus-visible, input:focus-visible, a:focus-visible { outline: 3px solid var(--cyan); outline-offset: 3px; }
+
+.app-shell { min-height: 100vh; background: var(--bg); overflow: hidden; }
+main { width: min(100%, 1080px); margin: 0 auto; padding: 24px 16px calc(64px + env(safe-area-inset-bottom)); }
+.hero { position: relative; padding: 20px 0 12px; }
+.hero::after { content: ""; position: absolute; right: -78px; top: -82px; width: 160px; height: 160px; border: 20px solid var(--yellow); border-radius: 50%; opacity: .78; z-index: 0; }
+.hero-copy { position: relative; z-index: 1; max-width: 640px; }
+.hero-tag, .section-kicker { margin: 0 0 5px; color: var(--orange); font: 800 11px/1.2 "Trebuchet MS", ui-rounded, sans-serif; letter-spacing: .13em; }
+.hero h1 { margin: 0; max-width: 620px; font: 900 clamp(30px, 8vw, 58px)/.98 "Trebuchet MS", ui-rounded, sans-serif; letter-spacing: -.045em; }
+.challenge-clock { position: relative; z-index: 1; display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) auto; align-items: center; gap: 9px; margin-top: 22px; padding: 12px 13px; border: 2px solid var(--text); border-radius: 10px 22px 10px 22px; background: var(--surface); box-shadow: 4px 5px 0 var(--text); }
+.challenge-clock div { min-width: 0; }
+.challenge-clock small, .challenge-clock strong { display: block; }
+.challenge-clock small { margin-bottom: 2px; color: var(--dim); font-size: 9px; font-weight: 850; text-transform: uppercase; letter-spacing: .08em; }
+.challenge-clock strong { font: 850 clamp(11px, 3.4vw, 14px)/1.15 "Trebuchet MS", ui-rounded, sans-serif; }
+.challenge-clock > span { color: var(--orange); font-size: 18px; font-weight: 900; }
+.challenge-clock .days-left { align-self: stretch; display: grid; grid-template-columns: auto auto; align-items: center; gap: 5px; padding-left: 10px; border-left: 2px solid var(--border); color: var(--text); }
+.challenge-clock .days-left strong { font-size: clamp(24px, 8vw, 34px); line-height: .9; color: var(--orange); }
+.challenge-clock .days-left small { max-width: 34px; margin: 0; line-height: 1.05; }
+.odometer-wrap { display: flex; align-items: baseline; gap: 10px; margin: 30px 0 12px; }
+.odometer-number { font: 900 clamp(64px, 22vw, 136px)/.78 "Trebuchet MS", ui-rounded, sans-serif; letter-spacing: -.08em; color: var(--text); text-shadow: 4px 4px 0 var(--cyan); }
+.odometer-unit { font: 900 17px/1 "Trebuchet MS", ui-rounded, sans-serif; color: var(--dim); transform: rotate(-5deg); }
+.trail-wrap { margin-top: 24px; }
+.trail-labels { display: flex; align-items: center; justify-content: space-between; margin-bottom: 9px; color: var(--dim); font-size: 12px; font-weight: 700; }
+.trail-labels strong { color: var(--text); }
+.trail { height: 23px; position: relative; border: 3px solid var(--text); border-radius: 999px; background: repeating-linear-gradient(135deg, var(--surface-alt) 0 9px, var(--surface) 9px 18px); box-shadow: 0 5px 0 rgba(16, 36, 62, .14); }
+.trail-fill { height: 100%; min-width: 0; border-radius: inherit; background: var(--cyan); transition: width 700ms cubic-bezier(.2, .9, .2, 1); }
+.runner { position: absolute; top: -17px; width: 32px; height: 40px; margin-left: -16px; transition: left 700ms cubic-bezier(.2, .9, .2, 1); filter: drop-shadow(0 3px 0 rgba(16, 36, 62, .18)); }
+.runner-face { position: absolute; left: 3px; top: 0; width: 26px; height: 26px; border: 3px solid var(--text); border-radius: 50%; background: var(--yellow); transform: rotate(-8deg); }
+.runner-face::after { content: ""; position: absolute; left: 7px; bottom: 4px; width: 9px; height: 4px; border-bottom: 2px solid var(--text); border-radius: 50%; }
+.runner-face i { position: absolute; top: 6px; width: 3px; height: 4px; border-radius: 50%; background: var(--text); }
+.runner-face i:first-child { left: 5px; }
+.runner-face i:last-child { right: 5px; }
+.runner-legs { position: absolute; left: 10px; top: 26px; width: 17px; height: 9px; border-left: 4px solid var(--text); border-bottom: 4px solid var(--text); transform: skew(-22deg) rotate(-8deg); }
+.next-stop { width: 100%; display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 12px; margin-top: 25px; padding: 14px; border: 0; border-radius: 14px 26px 14px 26px; background: var(--text); color: var(--bg); text-align: left; box-shadow: var(--shadow); cursor: pointer; }
+.next-stop small, .next-stop strong { display: block; }
+.next-stop small { opacity: .72; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; }
+.next-stop strong { margin-top: 2px; font: 800 15px/1.25 "Trebuchet MS", ui-rounded, sans-serif; }
+.milestone-dot { width: 18px; height: 34px; border-radius: 9px 9px 2px 2px; border: 2px solid currentColor; }
+.milestone-dot.cyan { background: var(--cyan); }.milestone-dot.yellow { background: var(--yellow); }.milestone-dot.orange { background: var(--orange); }.milestone-dot.mint { background: var(--mint); }
+.chevron { font-size: 30px; line-height: 1; }
+
+.journey-map-card { position: relative; margin-top: 18px; padding: 14px; border: 3px solid var(--text); border-radius: 24px 12px 24px 12px; background: var(--surface); box-shadow: var(--shadow); }
+.journey-map-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.journey-map-heading h2 { margin: 0; font: 900 24px/1.05 "Trebuchet MS", ui-rounded, sans-serif; letter-spacing: -.025em; }
+.map-expand-button { flex: 0 0 auto; min-height: 42px; display: flex; align-items: center; gap: 6px; padding: 7px 10px; border: 2px solid var(--text); border-radius: 12px 20px 12px 20px; background: var(--yellow); color: #10243e; font-size: 12px; font-weight: 900; box-shadow: 2px 3px 0 var(--text); cursor: pointer; }
+.map-expand-button span { font-size: 19px; line-height: 1; }
+.map-progress-key { display: flex; flex-wrap: wrap; gap: 13px; margin: 12px 1px 9px; color: var(--dim); font-size: 11px; font-weight: 800; }
+.map-progress-key span { display: flex; align-items: center; gap: 5px; }
+.map-progress-key i { width: 21px; height: 5px; border-radius: 999px; }
+.map-game-note { margin: -2px 1px 9px; color: var(--dim); font-size: 10px; line-height: 1.35; }
+.done-key { background: var(--orange); }
+.left-key { background: var(--dim); opacity: .65; }
+.adventure-map-frame { position: relative; overflow: hidden; border: 2px solid var(--text); border-radius: 18px 9px 18px 9px; background: var(--surface-alt); }
+.adventure-map { width: 100%; height: 270px; }
+.illustrated-map-wrap { position: relative; width: 100%; height: 270px; overflow: hidden; background: #c9eef7; touch-action: none; }
+.illustrated-map-svg { display: block; width: 100%; height: 100%; cursor: default; user-select: none; }
+.illustrated-map-svg.is-zoomed { cursor: grab; }
+.illustrated-map-svg.is-zoomed:active { cursor: grabbing; }
+.state-layer polygon { stroke: #49666d; stroke-width: 1.7; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+.state-label { fill: #49666d; font: 800 10px/1 "Trebuchet MS", ui-rounded, sans-serif; text-anchor: middle; opacity: .7; pointer-events: none; }
+.ocean-label { fill: #3b8296; font: italic 800 12px/1 "Trebuchet MS", ui-rounded, sans-serif; letter-spacing: .18em; opacity: .58; }
+.water-art { fill: #76c9e2; stroke: #3d8ca6; stroke-width: 2; opacity: .72; }
+.water-art .river { fill: none; stroke-width: 4; stroke-linecap: round; stroke-dasharray: 3 4; }
+.sketch-mountain path { fill: #9fc59a; stroke: #49666d; stroke-width: 2.5; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+.sketch-mountain path:nth-child(2) { fill: #fff9dd; }
+.cactus path, .geyser path, .golden-gate path, .space-needle path, .canyon path { fill: none; stroke: #284c58; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+.golden-gate path { stroke: #e45537; stroke-width: 4; }
+.space-needle path { stroke: #385d72; }
+.geyser path { stroke: #318fae; }
+.cactus path { stroke: #2d8060; stroke-width: 5; }
+.vegas-star path { fill: #ffd447; stroke: #9f5c20; stroke-width: 2.5; vector-effect: non-scaling-stroke; }
+.route-left { fill: none; stroke: #526b76; stroke-width: 4.5; stroke-dasharray: 5 8; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+.route-done { fill: none; stroke: #ff6b35; stroke-width: 6.5; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+.route-shadow { stroke: #fff9e9; stroke-width: 10; stroke-dasharray: none; opacity: .84; }
+.milestone-pins g[role="button"] { cursor: pointer; outline: none; }
+.milestone-pins circle { fill: #fffdf3; stroke: #173d4b; stroke-width: 2.2; vector-effect: non-scaling-stroke; transition: r 160ms ease, fill 160ms ease; }
+.milestone-pins .reached circle { fill: #ffd447; }
+.milestone-pins .selected circle { fill: #47d7ac; stroke-width: 3.5; }
+.milestone-pins .selected g[role="button"] circle, .milestone-pins g[role="button"]:focus circle { r: 10; }
+.milestone-pins text { fill: #173d4b; paint-order: stroke; stroke: #fffdf3; stroke-width: 4; font: 900 10px/1 "Trebuchet MS", ui-rounded, sans-serif; text-anchor: middle; }
+.map-runner { animation: runner-hop 700ms ease-in-out infinite alternate; filter: drop-shadow(0 3px 0 rgba(16,36,62,.25)); pointer-events: none; }
+.map-runner circle { fill: #ff6b35; stroke: #10243e; stroke-width: 3; vector-effect: non-scaling-stroke; }
+.map-runner path { fill: none; stroke: #10243e; stroke-width: 4.5; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+.map-runner .runner-smile { stroke-width: 2; }
+.map-zoom-controls { position: absolute; right: 8px; bottom: 8px; z-index: 4; display: flex; gap: 5px; }
+.map-zoom-controls button { min-width: 36px; height: 36px; padding: 0 7px; border: 2px solid #10243e; border-radius: 11px 7px 11px 7px; background: #fffdf3; color: #10243e; font-weight: 950; box-shadow: 2px 2px 0 #10243e; cursor: pointer; }
+.map-nudge { position: absolute; left: 9px; top: 9px; z-index: 3; padding: 5px 8px; border: 1px solid rgba(16, 36, 62, .24); border-radius: 999px; background: rgba(255, 255, 255, .91); color: #10243e; font-size: 9px; font-weight: 900; box-shadow: 0 2px 0 rgba(16, 36, 62, .18); pointer-events: none; }
+.map-fallback { position: absolute; inset: 0; z-index: 4; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 7px; padding: 24px; background: var(--surface-alt); color: var(--dim); text-align: center; }
+.map-fallback strong { color: var(--text); }
+.map-fallback span { max-width: 330px; font-size: 12px; line-height: 1.4; }
+.map-fallback button { min-height: 42px; margin-top: 5px; padding: 8px 14px; border: 2px solid var(--text); border-radius: 11px 18px 11px 18px; background: var(--yellow); color: #10243e; font-weight: 900; box-shadow: 2px 3px 0 var(--text); cursor: pointer; }
+.map-retrying { background: color-mix(in srgb, var(--surface-alt) 92%, transparent); }
+.map-loader { width: 28px; height: 28px; border: 4px solid var(--border); border-top-color: var(--orange); border-radius: 50%; animation: map-spin 700ms linear infinite; }
+.map-detail-panel { min-height: 96px; display: grid; grid-template-columns: 42px 1fr; gap: 11px; align-items: start; margin-top: 10px; padding: 11px 12px; border: 2px dashed var(--border); border-radius: 10px 18px 10px 18px; }
+.map-detail-panel small, .map-detail-panel strong { display: block; }
+.map-detail-panel small { color: var(--dim); font-size: 9px; font-weight: 900; letter-spacing: .06em; }
+.map-detail-panel strong { margin-top: 2px; font: 900 17px/1.1 "Trebuchet MS", ui-rounded, sans-serif; }
+.map-detail-panel p { margin: 4px 0 0; color: var(--dim); font-size: 11px; }
+.map-detail-panel a { display: inline-block; margin-top: 4px; color: var(--text); font-size: 10px; font-weight: 850; text-underline-offset: 2px; }
+.start-pin { display: grid; place-items: center; width: 40px; height: 40px; border: 3px solid var(--text); border-radius: 50%; background: var(--yellow); color: #10243e; font: 900 12px/1 "Trebuchet MS", ui-rounded, sans-serif; transform: rotate(-5deg); }
+.map-place-list { max-height: 170px; overflow: auto; margin-top: 10px; border-top: 2px solid var(--text); }
+.map-place-list button { width: 100%; padding: 9px 3px; border: 0; border-bottom: 1px solid var(--border); background: transparent; color: var(--text); text-align: left; font-size: 12px; font-weight: 800; cursor: pointer; }
+.adventure-map-pin { min-width: 25px; height: 25px; display: grid; place-items: center; padding: 0 4px; border: 2px solid #10243e; border-radius: 50% 50% 50% 7px; background: #fff; color: #10243e; font: 900 8px/1 "Trebuchet MS", ui-rounded, sans-serif; box-shadow: 0 2px 0 rgba(16, 36, 62, .24); transform: rotate(-7deg); }
+.adventure-map-pin.is-reached { background: #ffd447; }
+.adventure-map-pin.is-selected { background: #47d7ac; transform: rotate(-7deg) scale(1.28); z-index: 4; }
+.adventure-runner-pin { position: relative; width: 37px; height: 46px; filter: drop-shadow(0 4px 0 rgba(16, 36, 62, .25)); animation: runner-hop 700ms ease-in-out infinite alternate; }
+.adventure-runner-pin span { position: absolute; left: 4px; top: 0; width: 29px; height: 29px; border: 3px solid #10243e; border-radius: 50%; background: #ff6b35; }
+.adventure-runner-pin span::before, .adventure-runner-pin span::after { content: ""; position: absolute; top: 7px; width: 4px; height: 5px; border-radius: 50%; background: #10243e; }
+.adventure-runner-pin span::before { left: 5px; }.adventure-runner-pin span::after { right: 5px; }
+.adventure-runner-pin i { position: absolute; left: 9px; top: 29px; width: 21px; height: 12px; border-left: 5px solid #10243e; border-bottom: 5px solid #10243e; transform: skew(-23deg) rotate(-7deg); }
+.journey-map-card.expanded { position: fixed; z-index: 50; inset: 0; display: flex; flex-direction: column; margin: 0; padding: max(14px, env(safe-area-inset-top)) 14px max(14px, env(safe-area-inset-bottom)); border: 0; border-radius: 0; box-shadow: none; }
+.journey-map-card.expanded .adventure-map-frame { flex: 1 1 auto; min-height: 260px; }
+.journey-map-card.expanded .adventure-map, .journey-map-card.expanded .illustrated-map-wrap { height: 100%; min-height: 260px; }
+.journey-map-card.expanded .map-detail-panel { flex: 0 0 auto; }
+body.map-is-expanded { overflow: hidden; }
+
+/* Refined illustrated-atlas map — focused on the western territory the route visits. */
+.journey-map-card { border-color: #28443f; background: color-mix(in srgb, var(--surface) 96%, #efe8d8); box-shadow: 0 14px 30px rgba(23, 43, 48, .13); }
+.journey-map-heading h2 { font-family: Georgia, "Times New Roman", serif; font-weight: 700; letter-spacing: -.035em; }
+.journey-map-card .section-kicker { color: #a85338; }
+.map-expand-button { border-color: #28443f; border-radius: 999px; background: #e6c86d; color: #203b38; box-shadow: 2px 3px 0 #28443f; }
+.map-progress-key { color: color-mix(in srgb, var(--dim) 82%, #28443f); }
+.map-game-note { max-width: 52ch; color: color-mix(in srgb, var(--dim) 84%, #28443f); font-family: Georgia, "Times New Roman", serif; font-size: 11px; line-height: 1.45; }
+.done-key { background: #c95f43; }
+.left-key { background: #496f69; }
+.adventure-map-frame { border-color: #28443f; border-radius: 18px; background: #c4dce0; box-shadow: inset 0 0 0 1px rgba(255,255,255,.35); }
+.illustrated-map-wrap { height: clamp(390px, 105vw, 475px); background: #c4dce0; }
+.illustrated-map-svg { cursor: zoom-in; touch-action: none; overscroll-behavior: contain; }
+.illustrated-map-svg.is-zoomed { cursor: grab; }
+.illustrated-map-wrap.is-moving .illustrated-map-svg { cursor: grabbing; }
+.illustrated-map-svg:focus-visible { outline: 3px solid #c95f43; outline-offset: -4px; }
+.illustrated-map-svg .atlas-paper-layer,
+.illustrated-map-svg .atlas-terrain,
+.illustrated-map-svg .atlas-landmarks,
+.illustrated-map-svg .atlas-water,
+.illustrated-map-svg .atlas-state-label,
+.illustrated-map-svg .atlas-region-label { transition: opacity 180ms ease; }
+.illustrated-map-svg.is-deep .atlas-paper-layer,
+.illustrated-map-svg.is-deep .atlas-terrain,
+.illustrated-map-svg.is-deep .atlas-landmarks,
+.illustrated-map-svg.is-deep .atlas-water { opacity: 0; }
+.illustrated-map-svg.is-deep .atlas-state-label,
+.illustrated-map-svg.is-deep .atlas-region-label { opacity: .2; }
+.map-zoom-controls button:disabled { opacity: .42; cursor: default; box-shadow: none; }
+.atlas-coast-shadow { fill: #e7ddca; stroke: none; opacity: .94; }
+.atlas-paper-layer { pointer-events: none; mix-blend-mode: multiply; }
+.atlas-region-layer polygon { stroke: #5e7469; stroke-width: 1.6; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+.atlas-region-layer polygon:hover { filter: brightness(1.025); }
+.atlas-state-label text { fill: #627168; font: 600 12px/1 Georgia, "Times New Roman", serif; letter-spacing: .17em; text-anchor: middle; opacity: .7; pointer-events: none; }
+.atlas-ocean-label { fill: #547d84; font: italic 600 13px/1 Georgia, "Times New Roman", serif; letter-spacing: .28em; opacity: .64; }
+.atlas-region-label { fill: #6d786d; font: 600 11px/1 Georgia, "Times New Roman", serif; letter-spacing: .17em; text-anchor: middle; opacity: .66; }
+.atlas-water .lake { fill: #86bcc1; stroke: #638f93; stroke-width: 1.5; opacity: .8; vector-effect: non-scaling-stroke; }
+.atlas-water .river { fill: none; stroke: #7ca8a7; stroke-width: 2.2; stroke-linecap: round; stroke-dasharray: 2 6; opacity: .58; vector-effect: non-scaling-stroke; }
+.atlas-mountain .mountain-back { fill: #95aa98; opacity: .62; }
+.atlas-mountain .mountain-front { fill: #7f9988; opacity: .82; }
+.atlas-mountain .mountain-snow { fill: #ece9df; }
+.atlas-mountain .mountain-line { fill: none; stroke: #4f665c; stroke-width: 1.35; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+.atlas-redwood path:first-child { fill: #8a5c41; stroke: #4f665c; stroke-width: 1.3; vector-effect: non-scaling-stroke; }
+.atlas-redwood path:last-child { fill: #66856f; stroke: #4f665c; stroke-width: 1.4; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+.atlas-cactus path { fill: none; stroke: #668468; stroke-width: 6; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+.atlas-landmark path, .atlas-landmark circle { fill: none; stroke: #38554e; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+.atlas-landmark .landmark-fill { fill: #f2e4bf; stroke: #38554e; }
+.landmark-bridge path { stroke: #ad5644; }
+.landmark-bridge .landmark-fill { fill: #d67a62; stroke: #ad5644; opacity: .76; }
+.landmark-needle .landmark-fill { fill: #b9c8c3; }
+.landmark-canyon path { stroke: #a45f42; }
+.landmark-arch path { stroke: #8e5844; }
+.landmark-arch .landmark-fill { fill: #d6a17b; stroke: #8e5844; }
+.landmark-geyser path, .landmark-geyser circle { stroke: #557e82; }
+.landmark-rainier .landmark-fill { fill: #f5f0e6; }
+.landmark-salt path { stroke: #7f8980; }
+.atlas-route-halo { fill: none; stroke: #f8f3e8; stroke-width: 15; stroke-linecap: round; stroke-linejoin: round; opacity: .78; vector-effect: non-scaling-stroke; }
+.atlas-route-left { fill: none; stroke: #456b66; stroke-width: 4.2; stroke-dasharray: 3 9; stroke-linecap: round; stroke-linejoin: round; opacity: .88; vector-effect: non-scaling-stroke; }
+.atlas-route-done-halo { fill: none; stroke: #fff7e8; stroke-width: 11; stroke-linecap: round; stroke-linejoin: round; opacity: .9; vector-effect: non-scaling-stroke; }
+.atlas-route-done { fill: none; stroke: #c95f43; stroke-width: 6.5; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+.atlas-start circle { fill: #f3cf72; stroke: #28443f; stroke-width: 2.5; vector-effect: non-scaling-stroke; }
+.atlas-start path { fill: none; stroke: #28443f; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+.atlas-start text { fill: #28443f; paint-order: stroke; stroke: #f3ebdc; stroke-width: 4; stroke-linejoin: round; font: 700 11px/1 Georgia, "Times New Roman", serif; letter-spacing: .08em; }
+.ten-mile-checkpoints circle { fill: #6f8580; stroke: #fff8e9; stroke-width: 1; opacity: .68; vector-effect: non-scaling-stroke; pointer-events: none; }
+.ten-mile-checkpoints circle.reached { fill: #c95f43; opacity: .95; }
+.milestone-pins g[role="button"] { cursor: pointer; outline: none; }
+.milestone-pins .pin-hit { fill: transparent; stroke: none; }
+.milestone-pins .pin-mark { fill: #f8f2e5; stroke: #31534e; stroke-width: 1.7; vector-effect: non-scaling-stroke; transition: r 160ms ease, fill 160ms ease; }
+.milestone-pins .reached .pin-mark { fill: #e5bd58; }
+.milestone-pins .selected .pin-mark { fill: #ca684f; stroke: #fff8e9; stroke-width: 3; }
+.milestone-pins .selected g[role="button"] .pin-mark, .milestone-pins g[role="button"]:focus .pin-mark { r: 9; }
+.milestone-pins .final .pin-mark { fill: #ca684f; stroke: #28443f; stroke-width: 2.5; }
+.milestone-pins .pin-label { fill: #314b47; paint-order: stroke; stroke: #f1eadc; stroke-width: 4.5; stroke-linejoin: round; font: 700 10.5px/1 Georgia, "Times New Roman", serif; letter-spacing: .01em; text-anchor: start; }
+.milestone-pins .final .pin-label { fill: #8b4939; text-anchor: end; font-size: 11.5px; }
+.map-runner { animation: atlas-runner-hop 900ms ease-in-out infinite alternate; filter: drop-shadow(0 3px 2px rgba(27,46,44,.26)); pointer-events: none; }
+.map-runner .runner-aura { fill: #f6db8e; stroke: #fff8e8; stroke-width: 3; opacity: .92; vector-effect: non-scaling-stroke; }
+.map-runner .runner-head { fill: #c95f43; stroke: #28443f; stroke-width: 2.4; vector-effect: non-scaling-stroke; }
+.map-runner .runner-body, .map-runner .runner-smile { fill: none; stroke: #28443f; stroke-width: 3.2; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+.map-runner .runner-smile { stroke-width: 1.5; }
+.map-zoom-controls { right: 12px; bottom: 12px; gap: 6px; }
+.map-zoom-controls button { min-width: 38px; height: 38px; border-color: #28443f; border-radius: 999px; background: rgba(250, 246, 236, .94); color: #28443f; box-shadow: 1px 2px 0 #28443f; }
+.map-nudge { left: 12px; top: 12px; max-width: calc(100% - 72px); overflow: hidden; padding: 6px 10px; border-color: rgba(40,68,63,.22); background: rgba(250,246,236,.92); color: #28443f; font-family: Georgia, "Times New Roman", serif; font-size: 10px; font-weight: 600; letter-spacing: .02em; white-space: nowrap; text-overflow: ellipsis; box-shadow: 0 2px 8px rgba(40,68,63,.12); }
+.map-compass { position: absolute; right: 18px; top: 16px; display: grid; place-items: center; width: 24px; height: 39px; color: #375853; font: 700 10px/1 Georgia, "Times New Roman", serif; pointer-events: none; }
+.map-compass i { width: 1px; height: 22px; background: #375853; transform-origin: bottom; }
+.map-compass i::before { content: ""; position: absolute; left: 8px; top: 0; border: 4px solid transparent; border-bottom: 9px solid #375853; }
+.map-detail-panel { border-style: solid; border-color: color-mix(in srgb, var(--border) 72%, #8d9a88); background: color-mix(in srgb, var(--surface) 96%, #efe8d8); }
+.map-detail-panel strong { font-family: Georgia, "Times New Roman", serif; font-weight: 700; }
+.journey-map-card.expanded { background: color-mix(in srgb, var(--surface) 96%, #efe8d8); }
+.journey-map-card.expanded .illustrated-map-wrap { min-height: 320px; height: 100%; }
+@keyframes atlas-runner-hop { from { transform: translateY(0) rotate(-2deg); } to { transform: translateY(-4px) rotate(2deg); } }
+
+.log-zone, .chart-zone, .history-zone { margin-top: 34px; }
+.section-heading { display: flex; align-items: flex-end; justify-content: space-between; gap: 14px; margin-bottom: 15px; }
+.section-heading.compact { align-items: center; }
+.section-heading h2, .sheet h2 { margin: 0; font: 900 26px/1.05 "Trebuchet MS", ui-rounded, sans-serif; letter-spacing: -.025em; }
+.streak-badge { display: grid; grid-template-columns: auto auto; grid-template-rows: auto auto; align-items: center; column-gap: 6px; padding: 8px 11px; border: 2px solid var(--text); border-radius: 16px 8px 16px 8px; background: var(--yellow); color: #10243e; box-shadow: 3px 3px 0 var(--text); }
+.streak-badge strong { grid-row: 1 / 3; font: 900 25px/1 "Trebuchet MS", ui-rounded, sans-serif; }
+.streak-badge small { font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; }
+.flame { grid-row: 1 / 3; width: 15px; height: 21px; background: var(--orange); border: 2px solid #10243e; border-radius: 60% 45% 58% 55%; transform: rotate(42deg); }
+
+.run-form { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 16px; background: var(--surface); border: 3px solid var(--text); border-radius: 24px 12px 24px 12px; box-shadow: var(--shadow); }
+.run-form label { min-width: 0; }
+.run-form label > span { display: block; margin: 0 0 6px 3px; color: var(--dim); font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .09em; }
+.run-form input { width: 100%; min-height: 48px; padding: 0 12px; border: 2px solid var(--border); border-radius: 11px; background: var(--bg); color: var(--text); font-weight: 750; }
+.miles-input-wrap { position: relative; }
+.miles-input-wrap input { padding-right: 42px; }
+.miles-input-wrap b { position: absolute; right: 11px; top: 16px; color: var(--dim); font-size: 11px; }
+.primary-button { grid-column: 1 / -1; min-height: 52px; border: 3px solid var(--text); border-radius: 12px 24px 12px 24px; background: var(--orange); color: #10243e; font: 900 17px/1 "Trebuchet MS", ui-rounded, sans-serif; box-shadow: 0 5px 0 var(--text); cursor: pointer; }
+.primary-button:active { transform: translateY(3px); box-shadow: 0 2px 0 var(--text); }
+.primary-button:disabled { opacity: .58; cursor: wait; }
+.text-button { grid-column: 1 / -1; border: 0; background: transparent; color: var(--dim); font-weight: 800; cursor: pointer; }
+.form-message { margin: 12px 5px 0; color: var(--dim); font-size: 13px; font-weight: 700; }
+
+.stats-strip { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; margin-top: 26px; border-top: 2px solid var(--border); border-bottom: 2px solid var(--border); }
+.stats-strip div { padding: 18px 8px 16px; text-align: center; }
+.stats-strip div + div { border-left: 1px solid var(--border); }
+.stats-strip strong, .stats-strip span { display: block; }
+.stats-strip strong { font: 900 clamp(23px, 8vw, 36px)/1 "Trebuchet MS", ui-rounded, sans-serif; }
+.stats-strip span { margin-top: 5px; color: var(--dim); font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .07em; }
+.chart-note, .sync-note { color: var(--dim); font-size: 11px; }
+.bar-chart { display: grid; grid-template-columns: repeat(auto-fit, minmax(24px, 1fr)); gap: 7px; height: 214px; padding: 14px 10px 8px; border-bottom: 3px solid var(--text); background: linear-gradient(to bottom, transparent 32%, var(--border) 33%, transparent 34%, transparent 65%, var(--border) 66%, transparent 67%); }
+.bar-column { display: grid; grid-template-rows: 22px 1fr 27px; min-width: 0; text-align: center; }
+.bar-column > span { font: 800 10px/1 "Trebuchet MS", ui-rounded, sans-serif; color: var(--dim); }
+.bar-column small { overflow: hidden; padding-top: 6px; color: var(--dim); font-size: 9px; white-space: nowrap; text-overflow: clip; }
+.bar-track { position: relative; }
+.bar-track i { position: absolute; left: 14%; right: 14%; bottom: 0; min-width: 8px; border: 2px solid var(--text); border-radius: 9px 9px 3px 3px; background: var(--cyan); box-shadow: 2px 0 0 rgba(16, 36, 62, .2); transform-origin: bottom; animation: bar-pop 520ms cubic-bezier(.2, .9, .2, 1) both; }
+.bar-column:nth-child(3n+2) .bar-track i { background: var(--yellow); }
+.bar-column:nth-child(3n) .bar-track i { background: var(--mint); }
+.empty-chart, .error-state, .empty-log { min-height: 150px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; padding: 24px; border: 2px dashed var(--border); border-radius: 14px 26px; color: var(--dim); text-align: center; }
+.empty-chart strong, .error-state strong, .empty-log strong { color: var(--text); }
+.empty-chart small, .empty-log span, .error-state span { font-size: 12px; }
+.start-mark { display: grid; place-items: center; width: 42px; height: 42px; border: 3px solid var(--text); border-radius: 50%; background: var(--yellow); color: #10243e; font-weight: 900; transform: rotate(-6deg); }
+.error-state button, .refresh-button { border: 0; border-bottom: 2px solid currentColor; background: transparent; color: var(--text); font-weight: 800; cursor: pointer; }
+.run-list { list-style: none; margin: 0; padding: 0; border-top: 3px solid var(--text); }
+.run-list li { display: grid; grid-template-columns: 38px minmax(0, 1fr) auto; align-items: center; gap: 10px; padding: 14px 2px; border-bottom: 1px solid var(--border); }
+.run-index { color: var(--orange); font: 900 14px/1 "Trebuchet MS", ui-rounded, sans-serif; }
+.run-date strong, .run-date small, .run-miles strong, .run-miles small { display: block; }
+.run-date strong { font-size: 14px; }
+.run-date small, .run-miles small { color: var(--dim); font-size: 10px; }
+.run-miles { text-align: right; }
+.run-miles strong { font: 900 23px/1 "Trebuchet MS", ui-rounded, sans-serif; }
+.run-actions { grid-column: 2 / -1; display: flex; justify-content: flex-end; gap: 16px; }
+.run-actions button { padding: 2px 0; border: 0; border-bottom: 1px solid currentColor; background: transparent; color: var(--dim); font-size: 11px; font-weight: 800; cursor: pointer; }
+.run-actions button:last-child { color: var(--danger); }
+.sync-note { margin: 14px 0 0; text-align: right; }
+
+.overlay { position: fixed; z-index: 20; inset: 0; display: flex; align-items: flex-end; justify-content: center; padding: 18px 12px calc(18px + env(safe-area-inset-bottom)); background: rgba(6, 18, 31, .68); }
+.sheet { position: relative; width: min(100%, 560px); max-height: min(84vh, 760px); overflow: auto; padding: 25px 20px 22px; border: 3px solid var(--text); border-radius: 28px 16px 28px 16px; background: var(--surface); color: var(--text); box-shadow: 0 10px 0 rgba(0, 0, 0, .28); }
+.close-button { position: absolute; right: 16px; top: 14px; width: 40px; height: 40px; border: 2px solid var(--text); border-radius: 50%; background: var(--surface-alt); color: var(--text); font-size: 27px; line-height: 1; cursor: pointer; }
+.sheet-intro { margin: 9px 48px 16px 0; color: var(--dim); font-size: 13px; }
+.milestone-range-tabs { display: grid; grid-template-columns: repeat(2, 1fr); gap: 7px; position: sticky; top: -25px; z-index: 2; margin: 0 -4px; padding: 10px 4px; background: var(--surface); }
+.milestone-range-tabs button { min-height: 38px; padding: 7px 6px; border: 2px solid var(--border); border-radius: 10px 16px 10px 16px; background: var(--surface-alt); color: var(--dim); font-size: 11px; font-weight: 900; cursor: pointer; }
+.milestone-range-tabs button.active { border-color: var(--text); background: var(--yellow); color: #10243e; box-shadow: 2px 3px 0 var(--text); }
+.milestone-list { list-style: none; margin: 10px 0 0; padding: 0; }
+.milestone-list li { display: grid; grid-template-columns: 44px 1fr; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border); }
+.milestone-list li.locked { opacity: .48; }
+.milestone-list small, .milestone-list strong { display: block; }
+.milestone-list small { color: var(--dim); font-size: 9px; font-weight: 800; letter-spacing: .06em; }
+.milestone-list strong { margin-top: 3px; font: 800 16px/1.15 "Trebuchet MS", ui-rounded, sans-serif; }
+.milestone-list p { margin: 3px 0 0; color: var(--dim); font-size: 12px; }
+.milestone-source { display: inline-block; margin-top: 5px; color: var(--text); font-size: 10px; font-weight: 850; text-underline-offset: 2px; }
+.badge-orb { display: grid; place-items: center; width: 38px; height: 38px; border: 3px solid var(--text); border-radius: 50% 44% 51% 42%; color: #10243e; font-weight: 1000; transform: rotate(-6deg); }
+.badge-orb.cyan { background: var(--cyan); }.badge-orb.yellow { background: var(--yellow); }.badge-orb.orange { background: var(--orange); }.badge-orb.mint { background: var(--mint); }
+.source-note { margin: 18px 0 0; color: var(--dim); font-size: 11px; }
+.source-note a { color: var(--text); font-weight: 800; }
+.confirm-sheet { max-width: 420px; text-align: center; }
+.confirm-sheet h2 { margin-top: 10px; }
+.confirm-sheet p { color: var(--dim); }
+.warning-mark { display: grid; place-items: center; width: 46px; height: 46px; margin: 0 auto; border: 3px solid var(--text); border-radius: 50%; background: var(--yellow); color: #10243e; font: 900 24px/1 "Trebuchet MS", ui-rounded, sans-serif; }
+.confirm-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 22px; }
+.confirm-actions button { min-height: 48px; border: 2px solid var(--text); border-radius: 11px 18px; background: var(--surface-alt); color: var(--text); font-weight: 850; cursor: pointer; }
+.confirm-actions .danger-button { background: var(--danger); color: #fff; }
+.celebration-overlay { align-items: center; }
+.celebration-sheet { max-width: 460px; overflow: visible; text-align: center; animation: celebration-bounce 560ms cubic-bezier(.2, 1.35, .45, 1) both; }
+.badge-orb.giant { width: 74px; height: 74px; margin: -61px auto 14px; font-size: 34px; box-shadow: 0 7px 0 var(--text); }
+.celebration-route { display: block; margin: 18px 0 6px; font: 900 20px/1.1 "Trebuchet MS", ui-rounded, sans-serif; }
+.celebration-sheet p:not(.section-kicker) { color: var(--dim); }
+.celebration-sheet .primary-button { width: 100%; margin-top: 12px; }
+.confetti { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+.confetti i { position: absolute; top: -20px; left: var(--x); width: 9px; height: 16px; background: var(--cyan); transform: rotate(var(--tilt)); animation: confetti-fall var(--duration) ease-in infinite; animation-delay: var(--delay); }
+.confetti i:nth-child(4n+1) { background: var(--orange); }.confetti i:nth-child(4n+2) { background: var(--yellow); }.confetti i:nth-child(4n+3) { background: var(--mint); }
+
+@keyframes bar-pop { from { transform: scaleY(0); } to { transform: scaleY(1); } }
+@keyframes map-spin { to { transform: rotate(360deg); } }
+@keyframes runner-hop { from { transform: translateY(0) rotate(-2deg); } to { transform: translateY(-5px) rotate(3deg); } }
+@keyframes celebration-bounce { from { transform: scale(.74) rotate(-2deg); opacity: 0; } to { transform: scale(1) rotate(0); opacity: 1; } }
+@keyframes confetti-fall { to { transform: translateY(110vh) rotate(620deg); } }
+
+@media (min-width: 760px) {
+  main { padding: 36px 28px 80px; display: grid; grid-template-columns: minmax(0, 1.08fr) minmax(310px, .92fr); column-gap: 42px; }
+  .hero { grid-column: 1 / 2; grid-row: 1 / 3; padding-right: 10px; }
+  .log-zone { grid-column: 2 / 3; grid-row: 1 / 2; margin-top: 42px; }
+  .stats-strip { grid-column: 2 / 3; grid-row: 2 / 3; align-self: start; }
+  .chart-zone { grid-column: 1 / 2; }
+  .history-zone { grid-column: 2 / 3; }
+  .odometer-number { font-size: clamp(92px, 12vw, 136px); }
+  .overlay { align-items: center; }
+  .milestone-range-tabs { grid-template-columns: repeat(4, 1fr); }
+  .run-list li { grid-template-columns: 38px minmax(0, 1fr) auto auto; }
+  .run-actions { grid-column: auto; }
+}
+
+@media (max-width: 370px) {
+  main { padding-inline: 12px; }
+  .run-form { grid-template-columns: 1fr; }
+  .primary-button, .text-button { grid-column: 1; }
+  .section-heading h2 { font-size: 23px; }
+  .streak-badge { padding: 7px 8px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; }
+}
+
+
+/* Production vector map. Transient failures remount this primary view. */
+.real-map-shell {
+  position: relative;
+  width: 100%;
+  height: clamp(390px, 105vw, 475px);
+  overflow: hidden;
+  background: #c4dce0;
+}
+.real-map-canvas {
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+}
+.real-map-canvas .maplibregl-map {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+.real-map-canvas .maplibregl-ctrl-group {
+  border: 2px solid #28443f;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 2px 3px 0 rgba(40, 68, 63, .28);
+}
+.real-map-canvas .maplibregl-ctrl button {
+  width: 40px;
+  height: 40px;
+}
+.real-map-canvas .maplibregl-ctrl-attrib {
+  max-width: calc(100% - 18px);
+  font-size: 10px;
+}
+.real-map-probe {
+  position: absolute;
+  inset: 0;
+  z-index: 8;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 10px;
+  background: color-mix(in srgb, var(--surface-alt) 92%, transparent);
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 850;
+}
+.real-map-hint {
+  position: absolute;
+  z-index: 4;
+  left: 10px;
+  top: 10px;
+  max-width: calc(100% - 90px);
+  padding: 7px 10px;
+  border: 1px solid rgba(40, 68, 63, .28);
+  border-radius: 999px;
+  background: rgba(255, 253, 245, .92);
+  color: #203b38;
+  font-size: 10px;
+  font-weight: 900;
+  box-shadow: 0 3px 10px rgba(32, 59, 56, .14);
+  pointer-events: none;
+}
+.real-map-expanded-flag {
+  position: absolute;
+  z-index: 4;
+  right: 10px;
+  top: 10px;
+  padding: 6px 9px;
+  border-radius: 999px;
+  background: #203b38;
+  color: #fffdf5;
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: .08em;
+  pointer-events: none;
+}
+.real-map-unavailable {
+  position: absolute;
+  z-index: 8;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 8px;
+  padding: 28px;
+  text-align: center;
+  background: color-mix(in srgb, var(--surface-alt) 94%, transparent);
+  color: var(--text);
+}
+.real-map-unavailable strong { font-size: 16px; }
+.real-map-unavailable span {
+  max-width: 320px;
+  color: var(--dim);
+  font-size: 12px;
+  line-height: 1.45;
+}
+.real-map-unavailable button {
+  min-height: 42px;
+  margin-top: 4px;
+  padding: 8px 14px;
+  border: 2px solid #28443f;
+  border-radius: 999px;
+  background: #e6c86d;
+  color: #203b38;
+  font-size: 12px;
+  font-weight: 900;
+  cursor: pointer;
+}
+.journey-map-card.expanded .real-map-shell {
+  height: 100%;
+  min-height: 260px;
+}
+@media (min-width: 700px) {
+  .real-map-shell { height: 520px; }
+}
+
+/* Public street map: real tile images, accessible controls, no platform SDK. */
+.app-root { min-height: 100dvh; padding-top: env(safe-area-inset-top); padding-bottom: env(safe-area-inset-bottom); }
+.real-map-canvas { z-index: 0; }
+.real-map-canvas.leaflet-container { font-family: inherit; background: #e8e9d9; }
+.journey-map-controls { position: absolute; z-index: 700; right: 14px; top: 14px; display: flex; flex-direction: column; gap: 5px; }
+.journey-map-controls button { min-width: 44px; min-height: 44px; padding: 8px 12px; background: #fffaf0; border: 1px solid #c6cbb5; border-radius: 10px; color: #29453d; font: 700 12px inherit; cursor: pointer; box-shadow: 0 2px 8px #28413b22; }
+.journey-map-controls button:first-child, .journey-map-controls button:nth-child(2) { font-size: 24px; }
+.journey-map-controls button:disabled { opacity: .5; cursor: default; }
+.journey-landmark-marker span { display: grid; place-items: center; width: 26px; height: 26px; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); background: #fffaf0; border: 2px solid #456b66; color: #456b66; box-shadow: 0 2px 5px #0003; font-size: 14px; }
+.journey-landmark-marker.reached span { background: #e85f36; color: white; border-color: white; }
+.journey-start span { display: grid; place-items: center; height: 32px; border-radius: 50%; background: #29453d; color: white; border: 2px solid white; font: 700 10px sans-serif; }
+.journey-runner-marker span { display: grid; place-items: center; width: 40px; height: 40px; background: #fffaf0; border: 3px solid #e85f36; border-radius: 50%; font-size: 24px; box-shadow: 0 0 0 6px #e85f3625, 0 2px 12px #0003; }
+.leaflet-popup-content-wrapper { background: #fffaf0; color: #29453d; border-radius: 14px; }
+.landmark-popup small { display: block; color: #b44b2b; font-size: 9px; font-weight: 800; letter-spacing: 1px; margin-bottom: 7px; }
+.landmark-popup strong { display: block; font-size: 18px; line-height: 1.2; }
+.landmark-popup p { margin: 8px 0; font-size: 13px; }
+.landmark-popup span { display: block; border-top: 1px solid #d8ddc9; padding-top: 8px; font-size: 10px; color: #677769; }
+.real-map-hint { z-index: 600; pointer-events: none; }
+.map-offline-atlas { position: absolute; inset: 0; }
+.map-offline-note { position: absolute; z-index: 20; bottom: 40px; left: 12px; right: 12px; background: #fffaf0; border-radius: 10px; padding: 10px; color: #29453d; font-size: 12px; }
+.map-offline-note button { margin-left: 8px; cursor: pointer; }
+.leaflet-control-attribution { font-size: 9px !important; max-width: 100%; }
+button:focus-visible, a:focus-visible { outline: 3px solid #e85f36; outline-offset: 3px; }
+@media (max-width: 600px) { .real-map-hint { font-size: 10px; max-width: calc(100% - 20px); bottom: 24px; } .journey-map-controls { right: 10px; top: 10px; } }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; } }
+.adventure-brief { margin: 18px 0; padding: 18px 20px; background: #e8efdf; border: 1px solid #c9d4bd; border-radius: 16px; color: #29453d; }
+.adventure-brief h2 { margin: 4px 0 6px; font-size: 22px; }
+.adventure-brief p { margin: 4px 0; font-size: 12px; line-height: 1.5; }
+.adventure-brief-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 14px; padding-top: 14px; border-top: 1px solid #c9d4bd; }
+.adventure-brief-stats span { font-size: 11px; }
+.adventure-brief-stats strong { display: block; font-size: 25px; font-weight: 900; }
+.real-map-hint { top: auto; bottom: 26px; max-width: calc(100% - 20px); }
